@@ -17,6 +17,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Goutte\Client;
+
 
 class TodoController extends Controller
 {
@@ -32,6 +34,62 @@ class TodoController extends Controller
             'todos' => $todos
         ));
            
+    }
+    
+    /**
+     * @Route("/crawl", name="crawl")
+     */
+    
+    public function crawlAction(Request $request){
+        
+        $client = new Client();
+
+        $adsFirstPage = $this->matchAds('http://www.piata-az.ro/anunturi/autoturisme-1063');
+        
+       // $nextUrl = $this->matchNext('http://www.piata-az.ro/anunturi/autoturisme-1063');
+       //var_dump($adsFirstPage);
+      // exit();
+       
+           
+      
+       // print_r($crawler);
+        exit();
+
+        
+    }
+    
+    public function matchAds($url){
+        $client = new Client();
+        
+        $adsArray = array();
+
+        $crawler = $client->request('GET', $url);
+     
+        $crawler->filter('.link_totanunt')->each(function ($node) {
+        $adsArray[] = $node->attr('href');
+        
+      
+       });
+       print_r($adsArray);
+       exit();
+       return $adsArray;    
+        
+    }
+    
+    public function matchNext($url){
+        $client = new Client();
+        
+        $next = array();
+
+        $crawler = $client->request('GET', $url);
+     
+       $crawler->filter('.next_page')->each(function ($node) {
+        $next[] = $node->attr('href');
+       });
+       
+        
+       return $next;    
+        
     }
     
     
